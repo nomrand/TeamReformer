@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TeamReform
 {
@@ -20,9 +21,13 @@ namespace TeamReform
 
             // READ
             var beforeTeamMembers = readCSV(filedir + BEFORE_CSV_NAME);
+            // slice body (no header)
+            beforeTeamMembers = beforeTeamMembers.GetRange(1, beforeTeamMembers.Count - 1);
             // CONVERT
             var afterTeamMembers = TeamReform.ReformTeam(beforeTeamMembers, 1, 16);
             // WRITE
+            // add headr
+            afterTeamMembers.Insert(0, new String[] { "TEAM", "NO", "SCHOLL", "NAME" }.ToList());
             writeCSV(filedir + AFTER_CSV_NAME, afterTeamMembers);
         }
 
