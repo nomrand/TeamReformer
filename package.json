@@ -1,0 +1,8 @@
+{
+    "name": "com.nomrand.teamreform",
+    "displayName": "TeamReform",
+    "version": "0.5.0",
+    "unity": "2018.1",
+    "description": "List utility to reform team member list",
+    "dependencies": {}
+}
