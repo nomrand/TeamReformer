@@ -25,7 +25,7 @@ Xt個のチーム（各チームのチームメンバはXm人）を、Yt個の�
     * カラム3:メンバの属性2
 
 ### Unityに取り込む場合
-TeamReform\Program.csを、コンパイル対象ディレクトリ（Asset\Scriptsなど）にコピーする。
+TeamReform\TeamReform.csを、コンパイル対象ディレクトリ（Asset\Scriptsなど）にコピーする。
 以下のように、他の各CSスクリプトからチーム構成変更ユーティリティメソッドを使用できる。
 ```
  var beforeTeamMemberList = new List<List<String>>();
@@ -34,12 +34,12 @@ TeamReform\Program.csを、コンパイル対象ディレクトリ（Asset\Scrip
  // ... do something
  var resultTeamMemberList = TeamReform.TeamReform.ReformTeam(beforeTeamMemberList, whichColumIsTeamName, howManyAfterTeams);
 ```
-※詳しい使用法は、TeamReform\Program.csのコメントを参照。
+※詳しい使用法はTeamReform\Program.cs、およびTeamReform\TeamReform.csのコメントを参照。
 
 
 ## 制限事項
-* 構成変更前の各チームのチーム名（上記team_list.csvのカラム0）は、"0"から始まる数字となる
-* 構成変更前の各チームは、すべて同じメンバ数で構成されている必要がある（違う場合は、ダミーなどを入れて対応する）
+* 構成変更前の各チームのチーム名（上記team_list.csvのカラム0）は、数字文字（"0", "1", "2", ...）となる
+* 構成変更前の各チームは、すべて同じメンバ数で構成されている必要がある（違う場合は、ダミーなどを入れて対応すること）
 * Xt <= Xyの場合（変更後のチーム数の方が多い場合）、変更後チームには、同じ変更前チームのメンバは含まれない
 * Xt > Xyの場合（変更後のチーム数の方が少ない場合）、変更後チームには、同じ変更前チームのメンバがなるべく少ない割合となるように含まれる
 
