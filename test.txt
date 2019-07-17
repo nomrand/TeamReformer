@@ -1,2 +1,9 @@
-dotnet test
+* run (in TeamReform folder)
 dotnet run
+
+* test
+dotnet test
+
+* build
+dotnet build
+dotnet publish -c Release -r win-x64 --self-contained false
