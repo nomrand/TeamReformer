@@ -24,7 +24,7 @@ namespace TeamReform
             // slice body (no header)
             beforeTeamMembers = beforeTeamMembers.GetRange(1, beforeTeamMembers.Count - 1);
             // CONVERT
-            var afterTeamMembers = TeamReform.ReformTeam(beforeTeamMembers, 1, 16);
+            var afterTeamMembers = TeamReform.ReformTeam(beforeTeamMembers, 1, 12);
             // WRITE
             // add headr
             afterTeamMembers.Insert(0, new String[] { "TEAM", "NO", "SCHOLL", "NAME" }.ToList());
