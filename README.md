@@ -3,7 +3,7 @@ Xt個のチーム（各チームのチームメンバはXm人）を、Yt個の�
 構成変更後のYt個のチームは、変更前のチームの同じメンバがなるべく重複しないようにする。
 
 ## 使用方法
-### exe実行
+### exe実行の場合
 ```
  TeamReform.exe [入出力ファイルのディレクトリパス※省略可]
 ```
@@ -23,6 +23,19 @@ Xt個のチーム（各チームのチームメンバはXm人）を、Yt個の�
     * カラム1:メンバの属性1
     * カラム2:メンバの構成変更前に所属していたチーム
     * カラム3:メンバの属性2
+
+### Unityに取り込む場合
+TeamReform\Program.csを、コンパイル対象ディレクトリ（Asset\Scriptsなど）にコピーする。
+以下のように、他の各CSスクリプトからチーム構成変更ユーティリティメソッドを使用できる。
+```
+ var beforeTeamMemberList = new List<List<String>>();
+ int whichColumIsTeamName = 1;
+ int howManyAfterTeams = 12;
+ // ... do something
+ var resultTeamMemberList = TeamReform.TeamReform.ReformTeam(beforeTeamMemberList, whichColumIsTeamName, howManyAfterTeams);
+```
+※詳しい使用法は、TeamReform\Program.csのコメントを参照。
+
 
 ## 制限事項
 * 構成変更前の各チームのチーム名（上記team_list.csvのカラム0）は、"0"から始まる数字となる
