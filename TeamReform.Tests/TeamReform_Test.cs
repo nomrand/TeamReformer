@@ -2,11 +2,90 @@ using Xunit;
 using TeamReform;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TeamReform.UnitTests
 {
     public class TeamReform_Test
     {
+        [Fact]
+        public void ReformTeam_3x4_to_4x3()
+        {
+            // *** Prepare input data ***
+            // All member in before Team must be added in flat 
+            var beforeMemberList = new List<List<String>>()
+            {
+                // member from Before Team1 (Team key is index 1)
+                new String[] { "MEMBER1fromT1", "TEAM1", "INFO1-1-1" }.ToList(),
+                new String[] { "MEMBER2fromT1", "TEAM1", "INFO1-2-1" }.ToList(),
+                new String[] { "MEMBER3fromT1", "TEAM1", "INFO1-3-1" }.ToList(),
+                new String[] { "MEMBER4fromT1", "TEAM1", "INFO1-4-1" }.ToList(),
+                // member from Before Team2 (Team key is index 1)
+                new String[] { "MEMBER1fromT2", "TEAM2", "INFO2-1-1" }.ToList(),
+                new String[] { "MEMBER2fromT2", "TEAM2", "INFO2-2-1" }.ToList(),
+                new String[] { "MEMBER3fromT2", "TEAM2", "INFO2-3-1" }.ToList(),
+                new String[] { "MEMBER4fromT2", "TEAM2", "INFO2-4-1" }.ToList(),
+                // member from Before Team12 (Team key is index 1)
+                new String[] { "MEMBER1fromT12", "TEAM12", "INFO12-1-1" }.ToList(),
+                new String[] { "MEMBER2fromT12", "TEAM12", "INFO12-2-1" }.ToList(),
+                new String[] { "MEMBER3fromT12", "TEAM12", "INFO12-3-1" }.ToList(),
+                new String[] { "MEMBER4fromT12", "TEAM12", "INFO12-4-1" }.ToList(),
+            };
+
+            int afterTeamNum = 4;
+
+            // *** Call method ***
+            List<List<String>> afterMemberList = TeamReform.ReformTeam(beforeMemberList.ToList(), 1, afterTeamNum);
+
+            // *** Use result ***
+            // check all before member exists
+            Assert.Equal(beforeMemberList.Count, afterMemberList.Count);
+            foreach (List<String> beforeMember in beforeMemberList)
+            {
+                bool isExist = false;
+                foreach (List<String> afterMember in afterMemberList)
+                {
+                    bool match =
+                    (beforeMember[0] == afterMember[1]) &&
+                    (beforeMember[1] == afterMember[2]) &&
+                    (beforeMember[2] == afterMember[3]);
+
+                    if (match)
+                    {
+                        isExist = true;
+                        break;
+                    }
+                }
+                Assert.True(isExist);
+            }
+
+            var teamMemberMap = new Dictionary<String, List<List<String>>>();
+            teamMemberMap["0"] = new List<List<String>>();
+            teamMemberMap["1"] = new List<List<String>>();
+            teamMemberMap["2"] = new List<List<String>>();
+            teamMemberMap["3"] = new List<List<String>>();
+            // check after team has same number of members
+            foreach (List<String> afterMember in afterMemberList)
+            {
+                teamMemberMap[afterMember[0]].Add(afterMember);
+            }
+            Assert.Equal(3, teamMemberMap["0"].Count);
+            Assert.Equal(3, teamMemberMap["1"].Count);
+            Assert.Equal(3, teamMemberMap["2"].Count);
+            Assert.Equal(3, teamMemberMap["3"].Count);
+
+            // check in a after Team has only 1 of same before Team member
+            foreach (List<List<String>> memberList in teamMemberMap.Values)
+            {
+                Assert.Equal("TEAM", memberList[0][2].Substring(0, 4));
+                Assert.Equal("TEAM", memberList[1][2].Substring(0, 4));
+                Assert.Equal("TEAM", memberList[2][2].Substring(0, 4));
+                Assert.False(memberList[0][2] == memberList[1][2]);
+                Assert.False(memberList[1][2] == memberList[2][2]);
+                Assert.False(memberList[2][2] == memberList[0][2]);
+            }
+        }
+
         [Fact]
         public void AsignBeforeTeamMemberToAfterTeam_3x4_to_4x3()
         {
@@ -34,7 +113,7 @@ namespace TeamReform.UnitTests
             };
 
             // After :4Teams, each Team has 3 people
-            var result = TeamReform.AsignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 4, false);
+            var result = TeamReform.AssignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 4, false);
 
             // List size check
             Assert.Equal(4, result.Keys.Count);
@@ -85,7 +164,7 @@ namespace TeamReform.UnitTests
             };
 
             // After :2Teams, each Team has 6 people
-            var result = TeamReform.AsignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 2, false);
+            var result = TeamReform.AssignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 2, false);
 
             // List size check
             Assert.Equal(2, result.Keys.Count);
@@ -137,8 +216,8 @@ namespace TeamReform.UnitTests
             };
 
             // After :4Teams, each Team has 3 people
-            var result1 = TeamReform.AsignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 4, true);
-            var result2 = TeamReform.AsignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 4, true);
+            var result1 = TeamReform.AssignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 4, true);
+            var result2 = TeamReform.AssignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 4, true);
 
             // List size check
             Assert.Equal(4, result1.Keys.Count);
@@ -178,7 +257,7 @@ namespace TeamReform.UnitTests
                 new List<String>(){"12", "TEAM3", "NAME3_4"},
             };
 
-            var result = TeamReform.ConvertTeamMemberMappping(flatMember, 1, false);
+            var result = TeamReform.ConvertTeamMemberMappping(flatMember, 1);
 
             Assert.Equal(3, result.Keys.Count);
             Assert.Equal(4, result["TEAM1"].Count);
@@ -198,46 +277,6 @@ namespace TeamReform.UnitTests
             Assert.Equal(flatMember[5], result["TEAM3"][1]);
             Assert.Equal(flatMember[8], result["TEAM3"][2]);
             Assert.Equal(flatMember[11], result["TEAM3"][3]);
-        }
-        [Fact]
-        public void ConvertTeamMemberMappping_3x4_random___sometimes_failed()
-        {
-            // 3Teams, each Team has 4 people
-            var flatMember = new List<List<String>>()
-            {
-                new List<String>(){"1", "TEAM1", "NAME1_1"},
-                new List<String>(){"2", "TEAM2", "NAME2_1"},
-                new List<String>(){"3", "TEAM3", "NAME3_1"},
-                new List<String>(){"4", "TEAM1", "NAME1_2"},
-                new List<String>(){"5", "TEAM2", "NAME2_2"},
-                new List<String>(){"6", "TEAM3", "NAME3_2"},
-                new List<String>(){"7", "TEAM1", "NAME1_3"},
-                new List<String>(){"8", "TEAM2", "NAME2_3"},
-                new List<String>(){"9", "TEAM3", "NAME3_3"},
-                new List<String>(){"10", "TEAM1", "NAME1_4"},
-                new List<String>(){"11", "TEAM2", "NAME2_4"},
-                new List<String>(){"12", "TEAM3", "NAME3_4"},
-            };
-
-            var result1 = TeamReform.ConvertTeamMemberMappping(flatMember, 1, true);
-            var result2 = TeamReform.ConvertTeamMemberMappping(flatMember, 1, true);
-
-            Assert.True(result1.Keys.Count == result2.Keys.Count);
-
-            // result1 & result2 should be defferent
-            bool isDefferent = false;
-            foreach (String team in result1.Keys)
-            {
-                var members1 = result1[team];
-                var members2 = result2[team];
-
-                Assert.True(members1.Count == members2.Count);
-                for (int i = 0; i < members2.Count; i++)
-                {
-                    isDefferent |= (members1[i] != members2[i]);
-                }
-            }
-            Assert.True(isDefferent, "result1 & result2 should be defferent, but sometimes this test is failed...");
         }
     }
 }

@@ -31,7 +31,9 @@ namespace TeamReform
             var result = new List<List<String>>();
             try
             {
-                using (StreamReader file = new StreamReader(filepath, Encoding.UTF8))
+                // Open with read only
+                using (FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (StreamReader file = new StreamReader(stream, Encoding.UTF8))
                 {
                     while (!file.EndOfStream)
                     {
@@ -51,7 +53,7 @@ namespace TeamReform
         {
             try
             {
-                // ファイルを書き込みモード（上書き）で開く
+                // Open
                 using (StreamWriter file = new StreamWriter(filepath, false, Encoding.UTF8))
                 {
                     for (int i = 0; i < data.Count; i++)
@@ -61,7 +63,6 @@ namespace TeamReform
                         {
                             line += data[i][j] + ",";
                         }
-                        // ファイルに書き込む
                         file.WriteLine(line.Substring(0, line.Length - 1));
                     }
                 }
