@@ -16,6 +16,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace TeamReform
 {
@@ -26,21 +27,36 @@ namespace TeamReform
 
         static void Main(string[] args)
         {
-            String filedir = "";
-            if (args.Length > 0)
+            int afterTeamNum = 0;
+            String filedir = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+            // GET ARGS
+            if (args.Length == 0 || args.Length > 2)
             {
-                filedir = args[0] + System.IO.Path.DirectorySeparatorChar;
+                // Illigal Arguments
+                Console.WriteLine("Usage: <ProgramName> <Number of After Team> [input file path(option)]");
+                return;
+            }
+            // Number of After Team
+            afterTeamNum = int.Parse(args[0]);
+            if (args.Length > 1)
+            {
+                // input file path
+                filedir = args[1];
             }
 
+            if (!filedir.EndsWith(System.IO.Path.DirectorySeparatorChar))
+            {
+                filedir += System.IO.Path.DirectorySeparatorChar;
+            }
             // READ
             var beforeTeamMembers = readCSV(filedir + BEFORE_CSV_NAME);
             // slice body (no header)
             beforeTeamMembers = beforeTeamMembers.GetRange(1, beforeTeamMembers.Count - 1);
             // CONVERT
-            var afterTeamMembers = TeamReform.ReformTeam(beforeTeamMembers, 1, 12);
+            var afterTeamMembers = TeamReform.ReformTeam(beforeTeamMembers, 1, afterTeamNum);
             // WRITE
             // add headr
-            afterTeamMembers.Insert(0, new String[] { "TEAM", "NO", "SCHOLL", "NAME" }.ToList());
+            afterTeamMembers.Insert(0, new String[] { "TEAM", "NO", "SCHOOL", "NAME" }.ToList());
             writeCSV(filedir + AFTER_CSV_NAME, afterTeamMembers);
         }
 
@@ -62,7 +78,8 @@ namespace TeamReform
             }
             catch (IOException ioEx)
             {
-                Console.WriteLine(ioEx.Message);
+                // if error happened, just throw
+                throw ioEx;
             }
             return result;
         }
@@ -87,7 +104,8 @@ namespace TeamReform
             }
             catch (IOException ioEx)
             {
-                Console.WriteLine(ioEx.Message);
+                // if error happened, just throw
+                throw ioEx;
             }
         }
     }
