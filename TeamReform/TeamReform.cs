@@ -14,17 +14,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 namespace TeamReform
 {
     static public class TeamReform
     {
+        public const int TRY_NUM = 10;
+
         /// <summary>
         /// Reform(convert) Team structure
         /// </summary>
         /// <param name="beforeMemberList">Target members list</param>
         /// <param name="beforeTeamKeyIndex">Designate which index of beforeMemberList is before-Team's key</param>
         /// <param name="afterTeamNum">Number of after-Team to be devided</param>
-        /// <returns></returns>
+        /// <returns>Reformed members list</returns>
         /// <example>
         /// Before:12 Teams, 4 people in each Team<br>
         /// After :16 Teams, 3 people in each Team<br>
@@ -62,6 +65,122 @@ namespace TeamReform
         /// </code>
         /// </example>
         static public List<List<String>> ReformTeam(List<List<String>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum)
+        {
+            return ReformTeam(beforeMemberList, beforeTeamKeyIndex, afterTeamNum, TRY_NUM);
+        }
+
+        /// <summary>
+        /// Reform(convert) Team structure
+        /// <see cref="ReformTeam(List{List{string}}, int, int)">
+        /// Get "tryNum" number of reformed results, and return best scored(well-separated) result. 
+        /// </summary>
+        /// <param name="beforeMemberList">Target members list</param>
+        /// <param name="beforeTeamKeyIndex">Designate which index of beforeMemberList is before-Team's key</param>
+        /// <param name="afterTeamNum">Number of after-Team to be devided</param>
+        /// <param name="tryNum">Number of reform try times</param>
+        /// <returns>Reformed members list</returns>
+        static public List<List<String>> ReformTeam(List<List<String>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum, int tryNum)
+        {
+            if (tryNum <= 0)
+            {
+                return new List<List<String>>();
+            }
+
+            // *** try a specific number of times ***
+            var result = ReformTeam_Body(beforeMemberList, beforeTeamKeyIndex, afterTeamNum);
+            for (int i = 0; i < tryNum - 1; i++)
+            {
+                var tryResult = ReformTeam_Body(beforeMemberList, beforeTeamKeyIndex, afterTeamNum);
+                if (ReformScore(result, beforeTeamKeyIndex + 1) > ReformScore(tryResult, beforeTeamKeyIndex + 1))
+                {
+                    // select well-shuffled result
+                    result = tryResult;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Return team-reforming score
+        /// </summary>
+        /// <param name="afterMemberList">Reformed members list</param>
+        /// <param name="beforeTeamKeyIndex">Designate which index of afterMemberList is before-Team's key</param>
+        /// <returns>team-reforming score (lower is better-shuffled)</returns>
+        static public int ReformScore(List<List<String>> afterMemberList, int beforeTeamKeyIndex)
+        {
+            int result = 0;
+
+            // *** create "after-Team" - "before-Team member" map ***
+            var teamMap = afterMemberList.Aggregate(new Dictionary<String, List<List<String>>>(), (map, member) =>
+            {
+                if (!map.ContainsKey(member[0]))
+                {
+                    map[member[0]] = new List<List<String>>();
+                }
+                map[member[0]].Add(member);
+                return map;
+            });
+
+            // *** create after team member map ***
+            int numberOfNoShuffledTeam = 0;
+            int numberOfSameTeammate = 0;
+            int numberOfSameTeamCombo = 0;
+            var beforeTeamkeylist = new List<List<String>>();
+            foreach (String key in teamMap.Keys)
+            {
+                var beforeTeamList = teamMap[key].Select(mem => mem[beforeTeamKeyIndex]).ToList();
+                beforeTeamList.Sort();
+                beforeTeamkeylist.Add(beforeTeamList);
+
+                int distinct = beforeTeamList.Distinct().Count();
+                // How many no shufled team ?
+                numberOfNoShuffledTeam += (distinct == 1) ? 1 : 0;
+
+                // How many teammate of same before-Team ?
+                numberOfSameTeammate += beforeTeamList.Count() - distinct;
+            }
+            // How many same before-Team combination ?
+            numberOfSameTeamCombo += beforeTeamkeylist.Count() - DistinctList(beforeTeamkeylist).Count();
+
+            result += numberOfNoShuffledTeam * 100;
+            result += numberOfSameTeammate * 10;
+            result += numberOfSameTeamCombo * 1;
+            return result;
+        }
+
+        /// <summary>
+        /// return list has unique list<string>
+        /// </summary>
+        static public List<List<String>> DistinctList(List<List<String>> list)
+        {
+            var targetList = ((List<String>[])list.ToArray().Clone()).ToList();
+            var distinctList = list.Where(val =>
+            {
+                targetList.Remove(val);
+                foreach (var orgList in targetList)
+                {
+                    bool isAllElementsSame = true;
+                    for (int i = 0; i < orgList.Count; i++)
+                    {
+                        if (orgList[i] != val[i])
+                        {
+                            isAllElementsSame = false;
+                            break;
+                        }
+                    }
+                    if (isAllElementsSame)
+                    {
+                        // duplicated
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            return distinctList.ToList();
+        }
+
+        static public List<List<String>> ReformTeam_Body(List<List<String>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum)
         {
             // *** init ***
             var result = new List<List<String>>();

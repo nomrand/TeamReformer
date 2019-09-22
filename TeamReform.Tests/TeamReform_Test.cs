@@ -35,7 +35,7 @@ namespace TeamReform.UnitTests
             int afterTeamNum = 4;
 
             // *** Call method ***
-            List<List<String>> afterMemberList = TeamReform.ReformTeam(beforeMemberList.ToList(), 1, afterTeamNum);
+            List<List<String>> afterMemberList = TeamReform.ReformTeam_Body(beforeMemberList.ToList(), 1, afterTeamNum);
 
             // *** Use result ***
             // check all before member exists
