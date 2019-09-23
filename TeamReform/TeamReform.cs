@@ -251,7 +251,8 @@ namespace TeamReform
             if (isShuffle)
             {
                 // Order of assigned before-Team is shuffled
-                beforeTeamChooseOrder = beforeTeamChooseOrder.OrderBy(a => Guid.NewGuid()).ToList();
+                var r = new Random();
+                beforeTeamChooseOrder = beforeTeamChooseOrder.OrderBy(a => r.Next()).ToList();
             }
             var AfterTeamChooseOrder = result.Keys.ToList();
             int afterTeamIndex = AfterTeamChooseOrder.Count; // this will reset at following step
@@ -266,7 +267,8 @@ namespace TeamReform
                 if (isShuffle)
                 {
                     // Order of assigning member will be shuffled
-                    teamMembers = teamMembers.OrderBy(a => Guid.NewGuid()).ToList();
+                    var r = new Random();
+                    teamMembers = teamMembers.OrderBy(a => r.Next()).ToList();
                 }
                 foreach (List<String> member in teamMembers)
                 {
@@ -276,7 +278,8 @@ namespace TeamReform
                         if (isShuffle)
                         {
                             // Order of assigning after-Team will be shuffled at every loop
-                            AfterTeamChooseOrder = AfterTeamChooseOrder.OrderBy(a => Guid.NewGuid()).ToList();
+                            var r = new Random();
+                            AfterTeamChooseOrder = AfterTeamChooseOrder.OrderBy(a => r.Next()).ToList();
                         }
                     }
 
@@ -286,6 +289,16 @@ namespace TeamReform
 
                     afterTeamIndex++;
                 }
+            }
+            if (isShuffle)
+            {
+                var renewResult = new Dictionary<String, List<List<String>>>();
+                foreach (String afterTeam in result.Keys)
+                {
+                    var r = new Random();
+                    renewResult[afterTeam] = result[afterTeam].OrderBy(a => r.Next()).ToList();
+                }
+                result = renewResult;
             }
 
             return result;
