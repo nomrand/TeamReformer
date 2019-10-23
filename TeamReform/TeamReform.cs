@@ -338,10 +338,10 @@ namespace TeamReform
             if (showDetail)
             {
                 Console.WriteLine(
-                    $"No Shuffled Team:{numberOfNoShuffledTeam}\n" +
-                    $"Same Teammate in after Team:{numberOfSameTeammate}\n" +
-                    $"Same Team Combination(no defference):{numbersListOfSameTeamCombo[0]}\n" +
-                    $"Same Team Combination(1 member defference):{numbersListOfSameTeamCombo[1]}"
+                    "No Shuffled Team:" + numberOfNoShuffledTeam + "\n" +
+                    "Same Teammate in after Team:" + numberOfSameTeammate + "\n" +
+                    "Same Team Combination(no defference):" + numbersListOfSameTeamCombo[0] + "\n" +
+                    "Same Team Combination(1 member defference):" + numbersListOfSameTeamCombo[1]
                 );
             }
             return result;
