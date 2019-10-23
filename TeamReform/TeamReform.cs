@@ -19,7 +19,7 @@ namespace TeamReform
 {
     static public class TeamReform
     {
-        public const int TRY_NUM = 10;
+        public const int TRY_NUM = 10000;
 
         /// <summary>
         /// Reform(convert) Team structure
@@ -107,46 +107,86 @@ namespace TeamReform
         /// <param name="afterTeamKeyIndex">Designate which index of afterMemberList is after-Team's key</param>
         /// <param name="beforeTeamKeyIndex">Designate which index of afterMemberList is before-Team's key</param>
         /// <returns>team-reforming score (lower is better-shuffled)</returns>
-        static public int ReformScore(List<List<string>> afterMemberList, int afterTeamKeyIndex, int beforeTeamKeyIndex)
+        static public float ReformScore(List<List<string>> afterMemberList, int afterTeamKeyIndex, int beforeTeamKeyIndex)
         {
-            int result = 0;
+            float result = 0;
 
-            // *** create "after-Team" - "before-Team member" map ***
-            var teamMap = afterMemberList.Aggregate(new Dictionary<string, List<List<string>>>(), (map, member) =>
+            // *** create "after-Team" - "before-Team Key"s list map ***
+            var teamMap = afterMemberList.Aggregate(new Dictionary<string, List<string>>(), (map, member) =>
             {
                 var afterTeamKey = member[afterTeamKeyIndex];
+                var beforeTeamKey = member[beforeTeamKeyIndex];
                 if (!map.ContainsKey(afterTeamKey))
                 {
-                    map[afterTeamKey] = new List<List<string>>();
+                    map[afterTeamKey] = new List<string>();
                 }
-                map[afterTeamKey].Add(member);
+
+                map[afterTeamKey].Add(beforeTeamKey);
                 return map;
             });
 
-            // *** create after team member map ***
+            // *** Check each criterion for evaluation ***
             int numberOfNoShuffledTeam = 0;
             int numberOfSameTeammate = 0;
-            int numberOfSameTeamCombo = 0;
-            var beforeTeamkeylist = new List<List<string>>();
-            foreach (string key in teamMap.Keys)
-            {
-                var beforeTeamList = teamMap[key].Select(mem => mem[beforeTeamKeyIndex]).ToList();
-                beforeTeamList.Sort();
-                beforeTeamkeylist.Add(beforeTeamList);
+            const int CHECK_TARGET_SAME_MEMBERS_NUM = 4;
+            var numbersListOfSameTeamCombo = new int[CHECK_TARGET_SAME_MEMBERS_NUM];
 
+            var afterTeamKeys = teamMap.Keys.ToList();
+            afterTeamKeys.Sort();
+            foreach (string key in afterTeamKeys)
+            {
+                var beforeTeamList = teamMap[key];
                 int distinct = beforeTeamList.Distinct().Count();
-                // How many no shufled team ?
+
+                // *** Checks with one after-team ***
+                // CHECK:How many no shuffled team ?
+                // If one after-team (=teamMap[key]) is consisted of same before-team members,
+                // beforeTeamList.Distinct() must return "1 element list".
                 numberOfNoShuffledTeam += (distinct == 1) ? 1 : 0;
 
-                // How many teammate of same before-Team ?
+                // CHECK:How many teammate of same before-Team ?
+                // If one after-team (=teamMap[key]) has some same before-team members,
+                // beforeTeamList.Distinct() must have less elements than beforeTeamList.
                 numberOfSameTeammate += beforeTeamList.Count() - distinct;
-            }
-            // How many same before-Team combination ?
-            numberOfSameTeamCombo += beforeTeamkeylist.Count() - DistinctList(beforeTeamkeylist).Count();
 
-            result += numberOfNoShuffledTeam * 100;
-            result += numberOfSameTeammate * 10;
-            result += numberOfSameTeamCombo * 1;
+                // *** Checks with other after-teams ***
+                foreach (string key2 in afterTeamKeys)
+                {
+                    if (key == key2)
+                    {
+                        break;
+                    }
+
+                    // select same combination team keys (by unique key list)
+                    var beforeTeamDist1 = beforeTeamList.Distinct();
+                    var beforeTeamDist2 = teamMap[key2].Distinct();
+                    var andList = beforeTeamDist1.Intersect<string>(beforeTeamDist2);
+
+                    if (andList.Count() > 1)
+                    {
+                        // CHECK:How many same before-Team combination ?
+                        // There are (2 or more) same members in checking 2 teams.
+                        // If "differentTeamsNum" == 0, 2 teams are completely same.
+                        // If "differentTeamsNum" == 1, 2 teams have only 1 defferent team member.
+                        // If "differentTeamsNum" == 1, 2 teams have 2 defferent team member2.
+                        var differentTeamsNum = beforeTeamDist1.Count() - andList.Count();
+                        if (differentTeamsNum < CHECK_TARGET_SAME_MEMBERS_NUM)
+                        {
+                            numbersListOfSameTeamCombo[differentTeamsNum]++;
+                        }
+                    }
+                }
+            }
+
+            // *** Calculate each criterion ***
+            result += numberOfNoShuffledTeam * 100f;
+            result += numberOfSameTeammate * 10f;
+            var valueOfSameTeamCombo = 1.0f;
+            foreach (var count in numbersListOfSameTeamCombo)
+            {
+                result += count * valueOfSameTeamCombo;
+                valueOfSameTeamCombo /= (2.0f * 2.0f);
+            }
             return result;
         }
 

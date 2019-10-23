@@ -9,6 +9,16 @@ namespace TeamReform.UnitTests
 {
     public class TeamReform_SCore_Test
     {
+        private float createScoreValue(int i1, int i2, int[] i3List)
+        {
+            if (i3List == null)
+            {
+                i3List = new int[3];
+            }
+            return (i1 * 100f) + (i2 * 10f)
+                + (i3List[0] * 1f + i3List[1] * 1f / 4.0f + i3List[2] * 1f / 16.0f);
+        }
+
         [Fact]
         public void TeamScore_4x3_4x3_wellsuffled()
         {
@@ -34,12 +44,15 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
+            float score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
             // after 1 = T1, T1, T2, T3
             // after 2 = T1, T2, T2, T3
             // after 3 = T1, T2, T3, T3
-            Assert.Equal(10 * 3 + 1 * 0, score);
+            // no shuffle 0
+            // same teammate 3
+            // same team combination [3]
+            Assert.Equal(createScoreValue(0, 3, new int[] { 3, 0, 0, 0 }), score);
         }
 
         [Fact]
@@ -67,12 +80,15 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
+            float score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
-            // no shuffle * 1
-            // same teammate 3+2+2
-            // same team combination 1
-            Assert.Equal(100 * 1 + 10 * 7 + 1 * 1, score);
+            // after 1 = T2, T2, T3, T3
+            // after 2 = T1, T1, T1, T1
+            // after 3 = T2, T2, T3, T3
+            // no shuffle 1
+            // same teammate 2+3+2
+            // same team combination [1, 0, 0, 0]
+            Assert.Equal(createScoreValue(1, 7, new int[] { 1, 0, 0, 0 }), score);
         }
 
         [Fact]
@@ -100,12 +116,15 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
+            float score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
-            // no shuffle * 3
-            // same teammate 3*3
-            // same team combination 0
-            Assert.Equal(100 * 3 + 10 * 9 + 1 * 0, score);
+            // after 1 = T2, T2, T2, T2
+            // after 2 = T1, T1, T1, T1
+            // after 3 = T3, T3, T3, T3
+            // no shuffle 3
+            // same teammate 3+3+3
+            // same team combination [0]
+            Assert.Equal(createScoreValue(3, 9, null), score);
         }
 
         [Fact]
@@ -133,12 +152,16 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
+            float score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
+            // after 1 = T1, T2, T3
+            // after 2 = T1, T2, T3
+            // after 3 = T1, T2, T3
+            // after 4 = T1, T2, T3
             // no shuffle 0
             // same teammate 0
-            // same team combination 3
-            Assert.Equal(100 * 0 + 10 * 0 + 1 * 3, score);
+            // same team combination [1+2+3, 0, 0, 0]
+            Assert.Equal(createScoreValue(0, 0, new int[] { 6, 0, 0, 0 }), score);
         }
 
         [Fact]
@@ -166,12 +189,16 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
+            float score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
+            // after 1 = T2, T3, T3
+            // after 2 = T1, T1, T1
+            // after 3 = T2, T2, T3
+            // after 4 = T1, T2, T3
             // no shuffle 1
-            // same teammate 2+1+1
-            // same team combination 0
-            Assert.Equal(100 * 1 + 10 * 4 + 1 * 0, score);
+            // same teammate 1+2+1
+            // same team combination [1, 2]
+            Assert.Equal(createScoreValue(1, 4, new int[] { 1, 2, 0, 0 }), score);
         }
 
         [Fact]
@@ -244,12 +271,24 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
+            float score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
+            // after 1 = T1, T2, T3, T8
+            // after 2 = T3, T4, T8, T12
+            // after 3 = T1, T4, T5, T8
+            // after 4 = T1, T5, T6, T9
+            // after 5 = T2, T3, T4, T9
+            // after 6 = T2, T4, T5, T10
+            // after 7 = T2, T5, T6, T11
+            // after 8 = T3, T6, T7, T11
+            // after 9 = T6, T8, T9, T12
+            // after10 = T7, T9, T10, T12
+            // after11 = T7, T10, T11, T12
+            // after12 = T1, T7, T10, T11
             // no shuffle 0
             // same teammate 0
-            // same team combination 0
-            Assert.Equal(100 * 0 + 10 * 0 + 1 * 0, score);
+            // same team combination [0, 2, 1+2+1+2+2+2+1+2+1+1+2, 0]
+            Assert.Equal(createScoreValue(0, 0, new int[] { 0, 2, 17, 0 }), score);
         }
     }
 }
