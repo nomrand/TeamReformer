@@ -91,7 +91,7 @@ namespace TeamReform
             for (int i = 0; i < tryNum - 1; i++)
             {
                 var tryResult = ReformTeam_Body(beforeMemberList, beforeTeamKeyIndex, afterTeamNum);
-                if (ReformScore(result, beforeTeamKeyIndex + 1) > ReformScore(tryResult, beforeTeamKeyIndex + 1))
+                if (ReformScore(result, 0, beforeTeamKeyIndex + 1) > ReformScore(tryResult, 0, beforeTeamKeyIndex + 1))
                 {
                     // select well-shuffled result
                     result = tryResult;
@@ -104,20 +104,22 @@ namespace TeamReform
         /// Return team-reforming score
         /// </summary>
         /// <param name="afterMemberList">Reformed members list</param>
+        /// <param name="afterTeamKeyIndex">Designate which index of afterMemberList is after-Team's key</param>
         /// <param name="beforeTeamKeyIndex">Designate which index of afterMemberList is before-Team's key</param>
         /// <returns>team-reforming score (lower is better-shuffled)</returns>
-        static public int ReformScore(List<List<string>> afterMemberList, int beforeTeamKeyIndex)
+        static public int ReformScore(List<List<string>> afterMemberList, int afterTeamKeyIndex, int beforeTeamKeyIndex)
         {
             int result = 0;
 
             // *** create "after-Team" - "before-Team member" map ***
             var teamMap = afterMemberList.Aggregate(new Dictionary<string, List<List<string>>>(), (map, member) =>
             {
-                if (!map.ContainsKey(member[0]))
+                var afterTeamKey = member[afterTeamKeyIndex];
+                if (!map.ContainsKey(afterTeamKey))
                 {
-                    map[member[0]] = new List<List<string>>();
+                    map[afterTeamKey] = new List<List<string>>();
                 }
-                map[member[0]].Add(member);
+                map[afterTeamKey].Add(member);
                 return map;
             });
 

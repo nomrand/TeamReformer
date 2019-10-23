@@ -34,7 +34,7 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 2);
+            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
             // after 1 = T1, T1, T2, T3
             // after 2 = T1, T2, T2, T3
@@ -67,7 +67,7 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 2);
+            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
             // no shuffle * 1
             // same teammate 3+2+2
@@ -100,7 +100,7 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 2);
+            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
             // no shuffle * 3
             // same teammate 3*3
@@ -133,7 +133,7 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 2);
+            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
             // no shuffle 0
             // same teammate 0
@@ -166,7 +166,7 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 2);
+            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
             // no shuffle 1
             // same teammate 2+1+1
@@ -244,7 +244,7 @@ namespace TeamReform.UnitTests
             };
 
             // *** Call method ***
-            int score = TeamReform.ReformScore(afterMemberList, 2);
+            int score = TeamReform.ReformScore(afterMemberList, 0, 2);
 
             // no shuffle 0
             // same teammate 0
