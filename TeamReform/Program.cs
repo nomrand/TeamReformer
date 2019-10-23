@@ -65,7 +65,7 @@ namespace TeamReform
             // CONVERT
             Console.WriteLine($"# Convert {beforeTeamMembers.Count} members to {afterTeamNum} teams");
             var afterTeamMembers = TeamReform.ReformTeam(beforeTeamMembers, 1, afterTeamNum);
-            Console.WriteLine($"# Score (lower is better-shuffled):{TeamReform.ReformScore(afterTeamMembers, 0, 2)}");
+            Console.WriteLine($"# Score (lower is better-shuffled):{TeamReform.ReformScore(afterTeamMembers, 0, 2, true)}");
 
             // WRITE
             // add headr
@@ -131,7 +131,7 @@ namespace TeamReform
                 // slice body (no header)
                 teamMembers = teamMembers.GetRange(1, teamMembers.Count - 1);
 
-                Console.WriteLine($"# Score (lower is better-shuffled):{TeamReform.ReformScore(teamMembers, 0, 2)}");
+                Console.WriteLine($"# Score (lower is better-shuffled):{TeamReform.ReformScore(teamMembers, 0, 2, true)}");
             }
             catch (IOException ioEx)
             {
