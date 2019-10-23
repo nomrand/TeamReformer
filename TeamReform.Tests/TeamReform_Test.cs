@@ -236,6 +236,75 @@ namespace TeamReform.UnitTests
             Assert.True(isDefferent, "result1 & result2 should be defferent, but sometimes this test is failed...");
         }
 
+        [Fact]
+        public void AsignBeforeTeamMemberToAfterTeam_3x4incomplete_to_4xx()
+        {
+            // Before:3Teams, each Team has 4 people
+            var beforeTeamMemberMap = new Dictionary<String, List<List<String>>>()
+            {
+                {"TEAM1", new List<List<String>>() {
+                    new List<String>() { "1", "NAME1_1" },
+                    new List<String>() { "2", "NAME1_2" },
+                    new List<String>() { "3", "NAME1_2" },
+                }},
+                {"TEAM2", new List<List<String>>() {
+                    new List<String>() { "5", "NAME2_1" },
+                }},
+                {"TEAM3", new List<List<String>>() {
+                    new List<String>() { "9", "NAME3_1" },
+                    new List<String>() { "10", "NAME3_2" },
+                    new List<String>() { "11", "NAME3_3" },
+                }},
+            };
+
+            // After :4Teams, each Team has 3 people
+            var result = TeamReform.AssignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 4, false);
+
+            // Contents check
+            Assert.Equal(beforeTeamMemberMap["TEAM1"][0], result["0"][0]);
+            Assert.Equal(beforeTeamMemberMap["TEAM1"][1], result["1"][0]);
+            Assert.Equal(beforeTeamMemberMap["TEAM1"][2], result["2"][0]);
+            Assert.Equal(beforeTeamMemberMap["TEAM2"][0], result["3"][0]);
+            Assert.Equal(beforeTeamMemberMap["TEAM3"][0], result["0"][1]);
+            Assert.Equal(beforeTeamMemberMap["TEAM3"][1], result["1"][1]);
+            Assert.Equal(beforeTeamMemberMap["TEAM3"][2], result["2"][1]);
+        }
+
+        [Fact]
+        public void AsignBeforeTeamMemberToAfterTeam_3x4incomplete_to_2xx()
+        {
+            // Before:3Teams, each Team has 4 people
+            var beforeTeamMemberMap = new Dictionary<String, List<List<String>>>()
+            {
+                {"TEAM1", new List<List<String>>() {
+                    new List<String>() { "1", "NAME1_1" },
+                }},
+                {"TEAM2", new List<List<String>>() {
+                    new List<String>() { "5", "NAME2_1" },
+                    new List<String>() { "6", "NAME2_2" },
+                    new List<String>() { "7", "NAME2_2" },
+                    new List<String>() { "8", "NAME2_2" },
+                }},
+                {"TEAM3", new List<List<String>>() {
+                    new List<String>() { "9", "NAME3_1" },
+                    new List<String>() { "10", "NAME3_2" },
+                }},
+            };
+
+            // After :2Teams, each Team has 6 people
+            var result = TeamReform.AssignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, 2, false);
+
+            // Contents check
+            // if not shuffled, Team will choose TEAM1->TEAM2->TEAM3
+            Assert.Equal(beforeTeamMemberMap["TEAM1"][0], result["0"][0]);
+            Assert.Equal(beforeTeamMemberMap["TEAM2"][0], result["1"][0]);
+            Assert.Equal(beforeTeamMemberMap["TEAM2"][1], result["0"][1]);
+            Assert.Equal(beforeTeamMemberMap["TEAM2"][2], result["1"][1]);
+            Assert.Equal(beforeTeamMemberMap["TEAM2"][3], result["0"][2]);
+            Assert.Equal(beforeTeamMemberMap["TEAM3"][0], result["1"][2]);
+            Assert.Equal(beforeTeamMemberMap["TEAM3"][1], result["0"][3]);
+        }
+
 
         [Fact]
         public void ConvertTeamMemberMappping_3x4()
@@ -277,6 +346,36 @@ namespace TeamReform.UnitTests
             Assert.Equal(flatMember[5], result["TEAM3"][1]);
             Assert.Equal(flatMember[8], result["TEAM3"][2]);
             Assert.Equal(flatMember[11], result["TEAM3"][3]);
+        }
+
+        [Fact]
+        public void ConvertTeamMemberMappping_3incompletex4()
+        {
+            // 3Teams, each Team has 4 people
+            var flatMember = new List<List<String>>()
+            {
+                new List<String>(){"1", "TEAM1", "NAME1_1"},
+                new List<String>(){"2", "TEAM2", "NAME2_1"},
+                new List<String>(){"3", "TEAM3", "NAME3_1"},
+                new List<String>(){"6", "TEAM3", "NAME3_2"},
+                new List<String>(){"8", "TEAM2", "NAME2_3"},
+                new List<String>(){"12", "TEAM3", "NAME3_4"},
+            };
+
+            var result = TeamReform.ConvertTeamMemberMappping(flatMember, 1);
+
+            Assert.Equal(3, result.Keys.Count);
+            Assert.Equal(1, result["TEAM1"].Count);
+            Assert.Equal(flatMember[0], result["TEAM1"][0]);
+
+            Assert.Equal(2, result["TEAM2"].Count);
+            Assert.Equal(flatMember[1], result["TEAM2"][0]);
+            Assert.Equal(flatMember[4], result["TEAM2"][1]);
+
+            Assert.Equal(3, result["TEAM3"].Count);
+            Assert.Equal(flatMember[2], result["TEAM3"][0]);
+            Assert.Equal(flatMember[3], result["TEAM3"][1]);
+            Assert.Equal(flatMember[5], result["TEAM3"][2]);
         }
     }
 }

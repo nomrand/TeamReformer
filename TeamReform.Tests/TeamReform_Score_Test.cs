@@ -20,7 +20,7 @@ namespace TeamReform.UnitTests
         }
 
         [Fact]
-        public void TeamScore_4x3_4x3_wellsuffled()
+        public void TeamScore_3x4_3x4_wellsuffled()
         {
             // *** Prepare input data ***
             // All member must be added in flat 
@@ -56,7 +56,7 @@ namespace TeamReform.UnitTests
         }
 
         [Fact]
-        public void TeamScore_4x3_4x3_littlesuffled()
+        public void TeamScore_3x4_3x4_littlesuffled()
         {
             // *** Prepare input data ***
             // All member must be added in flat 
@@ -92,7 +92,7 @@ namespace TeamReform.UnitTests
         }
 
         [Fact]
-        public void TeamScore_4x3_4x3_nosuffled()
+        public void TeamScore_3x4_3x4_nosuffled()
         {
             // *** Prepare input data ***
             // All member must be added in flat 
@@ -128,7 +128,7 @@ namespace TeamReform.UnitTests
         }
 
         [Fact]
-        public void TeamScore_4x3_3x4_samecombi()
+        public void TeamScore_3x4_4x3_samecombi()
         {
             // *** Prepare input data ***
             // All member must be added in flat 
@@ -165,7 +165,7 @@ namespace TeamReform.UnitTests
         }
 
         [Fact]
-        public void TeamScore_4x3_3x4_littlesuffled()
+        public void TeamScore_3x4_4x3_littlesuffled()
         {
             // *** Prepare input data ***
             // All member must be added in flat 
@@ -199,6 +199,73 @@ namespace TeamReform.UnitTests
             // same teammate 1+2+1
             // same team combination [1, 2]
             Assert.Equal(createScoreValue(1, 4, new int[] { 1, 2, 0, 0 }), score);
+        }
+
+        [Fact]
+        public void TeamScore_3x4incomplete_4xx()
+        {
+            // *** Prepare input data ***
+            // All member must be added in flat 
+            var afterMemberList = new List<List<String>>()
+            {
+                // member from Team1
+                new String[] { "2", "MEMBER1fromT1", "TEAM1", "INFO1-1-1" }.ToList(),
+                new String[] { "2", "MEMBER2fromT1", "TEAM1", "INFO1-2-1" }.ToList(),
+                new String[] { "4", "MEMBER4fromT1", "TEAM1", "INFO1-4-1" }.ToList(),
+                // member from Team2
+                new String[] { "4", "MEMBER1fromT2", "TEAM2", "INFO2-1-1" }.ToList(),
+                new String[] { "1", "MEMBER2fromT2", "TEAM2", "INFO2-2-1" }.ToList(),
+                new String[] { "3", "MEMBER3fromT2", "TEAM2", "INFO2-3-1" }.ToList(),
+                new String[] { "3", "MEMBER4fromT2", "TEAM2", "INFO2-4-1" }.ToList(),
+                // member from Team3
+                new String[] { "4", "MEMBER3fromT3", "TEAM3", "INFO3-3-1" }.ToList(),
+                new String[] { "3", "MEMBER4fromT3", "TEAM3", "INFO3-4-1" }.ToList(),
+            };
+
+            // *** Call method ***
+            float score = TeamReform.ReformScore(afterMemberList, 0, 2);
+
+            // after 1 = T2
+            // after 2 = T1, T1
+            // after 3 = T2, T2, T3
+            // after 4 = T1, T2, T3
+            // no shuffle 2
+            // same teammate 2
+            // same team combination [0]
+            Assert.Equal(createScoreValue(2, 2, new int[] { 0, 1, 0, 0 }), score);
+        }
+
+        [Fact]
+        public void TeamScore_3x4incomplete_4x2()
+        {
+            // *** Prepare input data ***
+            // All member must be added in flat 
+            var afterMemberList = new List<List<String>>()
+            {
+                // member from Team1
+                new String[] { "1", "MEMBER1fromT1", "TEAM1", "INFO1-1-1" }.ToList(),
+                new String[] { "2", "MEMBER2fromT1", "TEAM1", "INFO1-2-1" }.ToList(),
+                new String[] { "4", "MEMBER4fromT1", "TEAM1", "INFO1-4-1" }.ToList(),
+                // member from Team2
+                new String[] { "2", "MEMBER1fromT2", "TEAM2", "INFO2-1-1" }.ToList(),
+                new String[] { "1", "MEMBER2fromT2", "TEAM2", "INFO2-2-1" }.ToList(),
+                new String[] { "3", "MEMBER3fromT2", "TEAM2", "INFO2-3-1" }.ToList(),
+                new String[] { "3", "MEMBER4fromT2", "TEAM2", "INFO2-4-1" }.ToList(),
+                // member from Team3
+                new String[] { "4", "MEMBER3fromT3", "TEAM3", "INFO3-3-1" }.ToList(),
+            };
+
+            // *** Call method ***
+            float score = TeamReform.ReformScore(afterMemberList, 0, 2);
+
+            // after 1 = T1, T2
+            // after 2 = T1, T2
+            // after 3 = T2, T2
+            // after 4 = T1, T3
+            // no shuffle 1
+            // same teammate 1
+            // same team combination [1]
+            Assert.Equal(createScoreValue(1, 1, new int[] { 1, 0, 0, 0 }), score);
         }
 
         [Fact]
