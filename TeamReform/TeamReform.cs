@@ -287,11 +287,11 @@ namespace TeamReform
 
                 // *** Checks with one after-team ***
                 // CHECK:How many no shuffled team ?
-                // If one after-team (=teamMap[key]) is consisted of same before-team members,
+                // If one after-team (=teamMap[key]) is consisted of same one-before-team members,
                 // beforeTeamList.Distinct() must return "1 element list".
                 numberOfNoShuffledTeam += (distinct == 1) ? 1 : 0;
 
-                // CHECK:How many teammate of same before-Team ?
+                // CHECK:How many teammates of same before-Team ?
                 // If one after-team (=teamMap[key]) has some same before-team members,
                 // beforeTeamList.Distinct() must have less elements than beforeTeamList.
                 numberOfSameTeammate += beforeTeamList.Count() - distinct;
@@ -312,10 +312,11 @@ namespace TeamReform
                     if (andList.Count() > 1)
                     {
                         // CHECK:How many same before-Team combination ?
-                        // There are (2 or more) same members in checking 2 teams.
-                        // If "differentTeamsNum" == 0, 2 teams are completely same.
-                        // If "differentTeamsNum" == 1, 2 teams have only 1 defferent team member.
-                        // If "differentTeamsNum" == 2, 2 teams have 2 defferent team member2.
+                        // In this route, there must be 2 or more same before-team members in checking 2 after-teams.
+                        // If "differentTeamsNum" == 0,
+                        // 2 teams have completely same before-team combination.
+                        // If "differentTeamsNum" == 1,
+                        // 2 teams have 1 defferent before-team member in their combination.
                         var differentTeamsNum = beforeTeamDist1.Count() - andList.Count();
                         if (differentTeamsNum < CHECK_TARGET_SAME_MEMBERS_NUM)
                         {

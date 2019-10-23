@@ -1,32 +1,40 @@
-# チーム構成変更ツール
-Xt個のチーム（各チームのチームメンバはXm人）を、Yt個のチーム（各チームのチームメンバは (Xt*Xm)/Yt人）に変更する。
-構成変更後のYt個のチームは、変更前のチームの同じメンバがなるべく重複しないようにする。
+[Japanese version of readme is here](./README.ja.md)
 
-## 使用方法
-### exe実行の場合
+
+# Team Reforming Tool
+Reform the "Xt" Teams (Each team has "Xm" members) to new "Yt" teams (Each team has "(Xt*Xm)/Yt" members).
+
+And, avoid that reformed after-teams have same before-team members.
+
+
+## How to use
+### If execute "exe" file
 ```
- TeamReform.exe <構成変更後のチーム数> [入出力ファイルのディレクトリパス※省略可]
+ TeamReform.exe <Num_of_Teams_after_reformed> [Directory_Path_of_InOut_File *Optional]
 ```
-入出力ファイルのディレクトリパスで指定したディレクトリ（省略した場合はexeと同ディレクトリ）に、構成変更前のチームメンバ情報として、以下のファイルを配置する
+1. Put the following file in "Directory_Path_of_InOut_File" (if omitted, it will be the same directory of "exe").
 * base_list.csv
-  * 1行目はヘッダ行（無視される）
-  * 2行目以降の各行は、変更前チームのメンバ情報
-    * カラム0:メンバの属性1
-    * カラム1:メンバの所属チーム（構成変更に使用する）
-    * カラム2:メンバの属性2
+  * Line 1 is a header (ignored)
+  * Each lines 2- are information of members which is not reformed
+    * Column 0:Member's element 1
+    * Column 1:Member's before-team (which is used to team-reforming)
+    * Column 2:Member's element 2
 
-実行後、構成変更後のチームメンバ情報として、以下のファイルが出力される（出力先は、上記入力ファイルと同じ）
+2. Execute "exe" file.
+
+3. The tool makes following file (into same directory of "base_list.csv")
 * team_list.csv
-  * 1行目はヘッダ行
-  * 2行目以降の各行は、変更後チームのメンバ情報
-    * カラム0:メンバの構成変更後の所属チーム（"0", "1", "2", ...）
-    * カラム1:メンバの属性1
-    * カラム2:メンバの構成変更前に所属していたチーム
-    * カラム3:メンバの属性2
+  * Line 1 is a header
+  * Each lines 2- are information of members which is already reformed
+    * Column 0:Member's after-team (=reformed teams. it must be "0", "1", "2", ...)
+    * Column 1:Member's element 1
+    * Column 2:Member's before-team
+    * Column 3:Member's element 2
 
-### Unityに取り込む場合
-TeamReform\TeamReform.csを、コンパイル対象ディレクトリ（Asset\Scriptsなど）にコピーする。
-以下のように、他の各CSスクリプトからチーム構成変更ユーティリティメソッドを使用できる。
+### If want to use in Unity
+1. Copy "TeamReform\TeamReform.cs" into Unity's compile target directory (such as "Asset\Scripts").
+
+2. In other CS script, you can use "TeamReform" utility method.
 ```
  var beforeTeamMemberList = new List<List<String>>();
  int whichColumIsTeamName = 1;
@@ -34,23 +42,23 @@ TeamReform\TeamReform.csを、コンパイル対象ディレクトリ（Asset\Sc
  // ... do something
  var resultTeamMemberList = TeamReform.TeamReform.ReformTeam(beforeTeamMemberList, whichColumIsTeamName, howManyAfterTeams);
 ```
-※詳しい使用法はTeamReform\Program.cs、およびTeamReform\TeamReform.csのコメントを参照。
+
+* You can see the details of how-to-use the method, in "TeamReform\Program.cs" or comments of "TeamReform\TeamReform.cs".
 
 
-## 制限事項
-* 構成変更後の各チームのチーム名（上記team_list.csvのカラム0）は、数字文字（"0", "1", "2", ...）となる
-* 構成変更前の各チームは、すべて同じメンバ数で構成されている必要がある（違う場合は、ダミーなどを入れて対応すること）
-* Xt <= Ytの場合（変更後のチーム数の方が多い場合）、変更後チームには、同じ変更前チームのメンバは含まれない
-* Xt > Ytの場合（変更後のチーム数の方が少ない場合）、変更後チームには、同じ変更前チームのメンバがなるべく少ない割合となるように含まれる
+## Limitations
+* Team names of reformed after-teams (Column 0 of "team_list.csv") are 数字文字("0", "1", "2", ...)となる
+* If Xt <= Yt (it means reformed after-teams are more than before-teams), each reformed after-team don't have duplicated before-teams teammembers.
+* If Xt > Yt (it means reformed after-teams are less than before-teams), each reformed after-team may have duplicated before-teams teammembers.
 
-## アルゴリズム
-概要としては、変更前チームの各メンバが（変更前チームごとに）、バラバラになるように変更後チームを選んでいくようなイメージ。
-1. 変更前チームの順序をシャッフルする（TEAM1,TEAM2,TEAM3 -> TEAM2, TEAM1, TEAM3のように。入力ファイルの順に依らずに、適当な割り当てとなるように）
-2. シャッフル後の変更前チームの各メンバの順序もシャッフルする（TEAM1のAさん、Bさん、Cさん -> TEAM1のCさん、Bさん、Aさん）
+## Algorithm
+This tool works like ... each before-teams member choose after-teams randomly.
+1. Shuffle the order of before-teams (such as TEAM1, TEAM2, TEAM3 -> TEAM2, TEAM1, TEAM3)
+2. Shuffle the order of members in before-teams (such as Mr.A in TEAM1, Mr.B in TEAM1, Mr.C in TEAM1 -> Mr.C in TEAM1, Mr.B in TEAM1, Mr.A in TEAM1)
 
-※上記シャッフルはチーム同士の順序、チーム内のメンバの順序を変えるだけで、メンバが所属しているチームは変えていない
+* In the shuffles above, change the order only. Not change the team of each member
 
-3. シャッフル後の変更前チームの各メンバが、1人ずつ順番にランダムに変更後チームを選んでいく（TEAM2のCさんがAFTERTEAM1、BさんがAFTERTEAM2、...のように）
-  * すでに他のメンバが選んだ変更後チームは、選択対象外
-  * すべてのチームが選択対象外の場合は（＝すべての変更後チームに、1人ずつメンバが割り当てられたら）、再びすべての変更後チームの中から選べるようになる
-4. 上記を、すべての変更前チームの各メンバが全員選択するまで繰り返す
+3. Each shuffled member of shuffled before-teams, choose after-teams randomly (such as Mr.A in TEAM1 chooses AFTERTEAM1, Mr.B chooses AFTERTEAM2, ...)
+  * Cannot choose the after-teams which already chosen by other members
+  * If all after-teams are chosen by other members, can choose all after-teams 
+4. Repeat above, until all members of all after-teams finish choosing
