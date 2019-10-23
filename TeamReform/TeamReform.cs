@@ -34,37 +34,37 @@ namespace TeamReform
         /// <code>
         /// // *** Prepare input data ***
         /// // All member in before-Team must be added in flat 
-        /// List<List<String>> beforeMemberList = new List<List<String>>()
+        /// List<List<string>> beforeMemberList = new List<List<string>>()
         /// {
         ///     // member from before-Team1 (Team key is index 1)
-        ///     new String[] { "MEMBER1fromT1", "TEAM1", "INFO1-1-1" }.ToList(),
-        ///     new String[] { "MEMBER2fromT1", "TEAM1", "INFO1-2-1" }.ToList(),
-        ///     new String[] { "MEMBER3fromT1", "TEAM1", "INFO1-3-1" }.ToList(),
-        ///     new String[] { "MEMBER4fromT1", "TEAM1", "INFO1-4-1" }.ToList(),
+        ///     new string[] { "MEMBER1fromT1", "TEAM1", "INFO1-1-1" }.ToList(),
+        ///     new string[] { "MEMBER2fromT1", "TEAM1", "INFO1-2-1" }.ToList(),
+        ///     new string[] { "MEMBER3fromT1", "TEAM1", "INFO1-3-1" }.ToList(),
+        ///     new string[] { "MEMBER4fromT1", "TEAM1", "INFO1-4-1" }.ToList(),
         ///     // member from before-Team2 (Team key is index 1)
-        ///     new String[] { "MEMBER1fromT2", "TEAM2", "INFO2-1-1" }.ToList(),
+        ///     new string[] { "MEMBER1fromT2", "TEAM2", "INFO2-1-1" }.ToList(),
         ///     ...
         ///     // member from before-Team12 (Team key is index 1)
-        ///     new String[] { "MEMBER1fromT12", "TEAM12", "INFO12-1-1" }.ToList(),
-        ///     new String[] { "MEMBER2fromT12", "TEAM12", "INFO12-2-1" }.ToList(),
-        ///     new String[] { "MEMBER3fromT12", "TEAM12", "INFO12-3-1" }.ToList(),
-        ///     new String[] { "MEMBER4fromT12", "TEAM12", "INFO12-4-1" }.ToList(),
+        ///     new string[] { "MEMBER1fromT12", "TEAM12", "INFO12-1-1" }.ToList(),
+        ///     new string[] { "MEMBER2fromT12", "TEAM12", "INFO12-2-1" }.ToList(),
+        ///     new string[] { "MEMBER3fromT12", "TEAM12", "INFO12-3-1" }.ToList(),
+        ///     new string[] { "MEMBER4fromT12", "TEAM12", "INFO12-4-1" }.ToList(),
         /// };
         /// 
         /// int afterTeamNum = 16;
         /// 
         /// // *** Call method ***
         /// // Reform "12 Team x 4 People" structure to "16 Team x 3 People" 
-        /// List<List<String>> afterMemberList = ReformTeam(beforeMemberList, 1, afterTeamNum);
+        /// List<List<string>> afterMemberList = ReformTeam(beforeMemberList, 1, afterTeamNum);
         /// 
         /// // *** Use result ***
         /// // afterMemberList consists of all member which has after-Team's name, in flat
         /// // Each after-Team's name is number string(like "0", "1", "2", ..., "16")
-        /// List<String> member1 = afterMemberList[0];
-        /// String new_team_of_member1 = member1[0];
+        /// List<string> member1 = afterMemberList[0];
+        /// string new_team_of_member1 = member1[0];
         /// </code>
         /// </example>
-        static public List<List<String>> ReformTeam(List<List<String>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum)
+        static public List<List<string>> ReformTeam(List<List<string>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum)
         {
             return ReformTeam(beforeMemberList, beforeTeamKeyIndex, afterTeamNum, TRY_NUM);
         }
@@ -79,11 +79,11 @@ namespace TeamReform
         /// <param name="afterTeamNum">Number of after-Team to be devided</param>
         /// <param name="tryNum">Number of reform try times</param>
         /// <returns>Reformed members list</returns>
-        static public List<List<String>> ReformTeam(List<List<String>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum, int tryNum)
+        static public List<List<string>> ReformTeam(List<List<string>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum, int tryNum)
         {
             if (tryNum <= 0)
             {
-                return new List<List<String>>();
+                return new List<List<string>>();
             }
 
             // *** try a specific number of times ***
@@ -106,16 +106,16 @@ namespace TeamReform
         /// <param name="afterMemberList">Reformed members list</param>
         /// <param name="beforeTeamKeyIndex">Designate which index of afterMemberList is before-Team's key</param>
         /// <returns>team-reforming score (lower is better-shuffled)</returns>
-        static public int ReformScore(List<List<String>> afterMemberList, int beforeTeamKeyIndex)
+        static public int ReformScore(List<List<string>> afterMemberList, int beforeTeamKeyIndex)
         {
             int result = 0;
 
             // *** create "after-Team" - "before-Team member" map ***
-            var teamMap = afterMemberList.Aggregate(new Dictionary<String, List<List<String>>>(), (map, member) =>
+            var teamMap = afterMemberList.Aggregate(new Dictionary<string, List<List<string>>>(), (map, member) =>
             {
                 if (!map.ContainsKey(member[0]))
                 {
-                    map[member[0]] = new List<List<String>>();
+                    map[member[0]] = new List<List<string>>();
                 }
                 map[member[0]].Add(member);
                 return map;
@@ -125,8 +125,8 @@ namespace TeamReform
             int numberOfNoShuffledTeam = 0;
             int numberOfSameTeammate = 0;
             int numberOfSameTeamCombo = 0;
-            var beforeTeamkeylist = new List<List<String>>();
-            foreach (String key in teamMap.Keys)
+            var beforeTeamkeylist = new List<List<string>>();
+            foreach (string key in teamMap.Keys)
             {
                 var beforeTeamList = teamMap[key].Select(mem => mem[beforeTeamKeyIndex]).ToList();
                 beforeTeamList.Sort();
@@ -151,9 +151,9 @@ namespace TeamReform
         /// <summary>
         /// return list has unique list<string>
         /// </summary>
-        static public List<List<String>> DistinctList(List<List<String>> list)
+        static public List<List<string>> DistinctList(List<List<string>> list)
         {
-            var targetList = ((List<String>[])list.ToArray().Clone()).ToList();
+            var targetList = ((List<string>[])list.ToArray().Clone()).ToList();
             var distinctList = list.Where(val =>
             {
                 targetList.Remove(val);
@@ -180,10 +180,10 @@ namespace TeamReform
             return distinctList.ToList();
         }
 
-        static public List<List<String>> ReformTeam_Body(List<List<String>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum)
+        static public List<List<string>> ReformTeam_Body(List<List<string>> beforeMemberList, int beforeTeamKeyIndex, int afterTeamNum)
         {
             // *** init ***
-            var result = new List<List<String>>();
+            var result = new List<List<string>>();
             // convert flat list of before-Team members, to "before-Team name"-"list of members" map
             var beforeTeamMemberMap = ConvertTeamMemberMappping(beforeMemberList, beforeTeamKeyIndex);
 
@@ -192,14 +192,14 @@ namespace TeamReform
             var memberAssignedAfterMap = AssignBeforeTeamMemberToAfterTeam(beforeTeamMemberMap, afterTeamNum, true);
 
             // *** change to list ***
-            foreach (String afterTeamName in memberAssignedAfterMap.Keys)
+            foreach (string afterTeamName in memberAssignedAfterMap.Keys)
             {
-                foreach (List<String> memberInfo in memberAssignedAfterMap[afterTeamName])
+                foreach (List<string> memberInfo in memberAssignedAfterMap[afterTeamName])
                 {
-                    // convert member info to List<String>
+                    // convert member info to List<string>
                     // 1st element of list is after-Team's name(like "0", "1", "2", ..., "16")
                     // and 2nd, 3rd, 4th are member information
-                    result.Add(new String[] { afterTeamName, memberInfo[0], memberInfo[1], memberInfo[2] }.ToList());
+                    result.Add(new string[] { afterTeamName, memberInfo[0], memberInfo[1], memberInfo[2] }.ToList());
                 }
             }
             return result;
@@ -211,17 +211,17 @@ namespace TeamReform
         /// <param name="memberList">Flat list of Team members</param>
         /// <param name="beforeTeamKeyIndex">Designate which index of memberList is Team's key</param>
         /// <returns>"Team name"-"list of members" map</returns>
-        static public Dictionary<String, List<List<String>>> ConvertTeamMemberMappping(
-            List<List<String>> memberList, int beforeTeamKeyIndex)
+        static public Dictionary<string, List<List<string>>> ConvertTeamMemberMappping(
+            List<List<string>> memberList, int beforeTeamKeyIndex)
         {
-            var result = new Dictionary<String, List<List<String>>>();
+            var result = new Dictionary<string, List<List<string>>>();
 
-            foreach (List<String> memberInfo in memberList)
+            foreach (List<string> memberInfo in memberList)
             {
-                String teamKey = memberInfo[beforeTeamKeyIndex];
+                string teamKey = memberInfo[beforeTeamKeyIndex];
                 if (!result.ContainsKey(teamKey))
                 {
-                    result[teamKey] = new List<List<String>>();
+                    result[teamKey] = new List<List<string>>();
                 }
                 result[teamKey].Add(memberInfo);
             }
@@ -236,15 +236,15 @@ namespace TeamReform
         /// <param name="afterTeamNum">number of after-Teams</param>
         /// <param name="isShuffle">whether shuffle result or not</param>
         /// <returns>"after-Team name"-"list of members" map(Team's name is number(like "0", "1", "2", ..., "16"))</returns>
-        static public Dictionary<String, List<List<String>>> AssignBeforeTeamMemberToAfterTeam(
-            Dictionary<String, List<List<String>>> beforeTeamMemberMap, int afterTeamNum, bool isShuffle)
+        static public Dictionary<string, List<List<string>>> AssignBeforeTeamMemberToAfterTeam(
+            Dictionary<string, List<List<string>>> beforeTeamMemberMap, int afterTeamNum, bool isShuffle)
         {
             // init
             // create after-Team Name by "1", "2", "3", ...
-            var result = new Dictionary<String, List<List<String>>>();
+            var result = new Dictionary<string, List<List<string>>>();
             for (int i = 0; i < afterTeamNum; i++)
             {
-                result[i.ToString()] = new List<List<String>>();
+                result[i.ToString()] = new List<List<string>>();
             }
             // init for shuffle
             var beforeTeamChooseOrder = beforeTeamMemberMap.Keys.ToList();
@@ -261,7 +261,7 @@ namespace TeamReform
             // * At first, all member in same before-Team(="beforeTeamName") going to be assigned to each after-Teams.
             //   Assigned target after-Team will change cyclically (by "AfterTeamChooseOrder").
             //   So, a before-Team member may not be assigned to after-Team which has already have same before-Team member.
-            foreach (String beforeTeamName in beforeTeamChooseOrder)
+            foreach (string beforeTeamName in beforeTeamChooseOrder)
             {
                 var teamMembers = beforeTeamMemberMap[beforeTeamName];
                 if (isShuffle)
@@ -270,7 +270,7 @@ namespace TeamReform
                     var r = new Random();
                     teamMembers = teamMembers.OrderBy(a => r.Next()).ToList();
                 }
-                foreach (List<String> member in teamMembers)
+                foreach (List<string> member in teamMembers)
                 {
                     if (afterTeamIndex >= AfterTeamChooseOrder.Count)
                     {
@@ -283,7 +283,7 @@ namespace TeamReform
                         }
                     }
 
-                    String afterTeamName = AfterTeamChooseOrder[afterTeamIndex];
+                    string afterTeamName = AfterTeamChooseOrder[afterTeamIndex];
                     // assign "member" (which was in before-Team="beforeTeamName"), to after-Team(="afterTeamName")
                     result[afterTeamName].Add(member);
 
@@ -292,8 +292,8 @@ namespace TeamReform
             }
             if (isShuffle)
             {
-                var renewResult = new Dictionary<String, List<List<String>>>();
-                foreach (String afterTeam in result.Keys)
+                var renewResult = new Dictionary<string, List<List<string>>>();
+                foreach (string afterTeam in result.Keys)
                 {
                     var r = new Random();
                     renewResult[afterTeam] = result[afterTeam].OrderBy(a => r.Next()).ToList();
