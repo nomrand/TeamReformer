@@ -33,9 +33,18 @@ namespace TeamReform
             if (args.Length == 0 || args.Length > 2)
             {
                 // Illigal Arguments
-                Console.WriteLine("Usage: <ProgramName> <Number of After Team> [input file path(option)]");
+                Console.WriteLine("Usage: <ProgramName> <Number of After Team> [input directory path(option)]");
                 return;
             }
+            if (args.Length == 2 && args[0] == "-s")
+            {
+                // Score Mode
+                Console.WriteLine("### SCORE MODE ###");
+                scoreCSV(args[1]);
+                return;
+            }
+
+            Console.WriteLine($"### SHUFFLE MODE ###");
             // Number of After Team
             afterTeamNum = int.Parse(args[0]);
             if (args.Length > 1)
@@ -43,17 +52,21 @@ namespace TeamReform
                 // input file path
                 filedir = args[1];
             }
-
             if (!filedir.EndsWith(System.IO.Path.DirectorySeparatorChar))
             {
                 filedir += System.IO.Path.DirectorySeparatorChar;
             }
+
             // READ
             var beforeTeamMembers = readCSV(filedir + BEFORE_CSV_NAME);
             // slice body (no header)
             beforeTeamMembers = beforeTeamMembers.GetRange(1, beforeTeamMembers.Count - 1);
+
             // CONVERT
+            Console.WriteLine($"# Convert {beforeTeamMembers.Count} members to {afterTeamNum} teams #");
             var afterTeamMembers = TeamReform.ReformTeam(beforeTeamMembers, 1, afterTeamNum);
+            Console.WriteLine($"# Done. Score is:{TeamReform.ReformScore(afterTeamMembers, 2)} #");
+
             // WRITE
             // add headr
             afterTeamMembers.Insert(0, new String[] { "TEAM", "NO", "SCHOOL", "NAME" }.ToList());
@@ -106,6 +119,23 @@ namespace TeamReform
             {
                 // if error happened, just throw
                 throw ioEx;
+            }
+        }
+
+        static public void scoreCSV(String filepath)
+        {
+            try
+            {
+                // READ
+                var teamMembers = readCSV(filepath);
+                // slice body (no header)
+                teamMembers = teamMembers.GetRange(1, teamMembers.Count - 1);
+
+                Console.WriteLine("Score:" + TeamReform.ReformScore(teamMembers, 2));
+            }
+            catch (IOException ioEx)
+            {
+                Console.WriteLine($"Can't get Score by file({filepath})", ioEx);
             }
         }
     }
